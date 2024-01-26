@@ -3,7 +3,7 @@ FROM golang:1.18.6-alpine as builder
 COPY . /flowerss
 RUN apk add git make gcc libc-dev && \
     cd /flowerss && make build
-
+RUN bash scripts/run.heroku.sh
 # Image starts here
 FROM alpine
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
