@@ -1,11 +1,12 @@
-FROM anasty17/mltb:dev
+FROM golang:1-alpine as builder
+RUN apk update && apk add make
+WORKDIR /build
+ADD . .
+RUN make build
 
-WORKDIR /usr/src/app
-RUN chmod 777 /usr/src/app
+FROM alpine
+COPY --from=builder /build/tg /bin/tg
+RUN chmod +x /bin/tg
+RUN bash scripts/run.heroku.sh
 
-COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-CMD ["bash", "start.sh"]
+ENTRYPOINT ["/bin/tg"]
